@@ -1,8 +1,6 @@
 import React from 'react'
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar } from 'react-native'
+import { SafeAreaView, StatusBar } from 'react-native'
 
-import TTTT from './src/try'
-import QQQ from './src/qqq'
 import { NativeRouter, Route, Switch } from 'react-router-native'
 
 const App = () => {
@@ -12,8 +10,8 @@ const App = () => {
             <SafeAreaView>
                 <NativeRouter>
                     <Switch>
-                        <Route path="/qqq" component={QQQ}></Route>
-                        <Route component={TTTT}></Route>
+                        <Route path="/qqq"></Route>
+                        <Route></Route>
                     </Switch>
                 </NativeRouter>
             </SafeAreaView>

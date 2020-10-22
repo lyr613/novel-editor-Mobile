@@ -4,6 +4,7 @@ import { useHistory } from 'react-router'
 import RNFS from 'react-native-fs'
 import { mk_router } from '@/router/opt'
 
+// 文件读写
 export default function QQQ() {
     const his = useHistory()
     const r = mk_router('edit')

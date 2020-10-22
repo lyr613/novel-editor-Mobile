@@ -3,14 +3,13 @@ import { StyleSheet, Text, View } from 'react-native'
 import { useHistory } from 'react-router'
 import { mk_router } from '@/router/opt'
 
+// 尝试扫二维码
 import { RNCamera } from 'react-native-camera'
 
 export default function TTTT() {
     const his = useHistory()
-    const [did_view, next_did_view] = useState('')
-    useEffect(() => {
-        console.log('efff')
-    }, [])
+    const [did_view, next_did_view] = useState('123')
+    useEffect(() => {}, [])
     return (
         <View
             onTouchStart={() => {
