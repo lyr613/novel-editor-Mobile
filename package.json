@@ -12,6 +12,7 @@
     "dependencies": {
         "react": "16.13.1",
         "react-native": "0.63.3",
+        "react-native-camera": "^3.40.0",
         "react-native-fs": "^2.16.6",
         "react-router-native": "^5.2.0"
     },
