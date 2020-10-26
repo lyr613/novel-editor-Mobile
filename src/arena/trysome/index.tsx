@@ -1,12 +1,16 @@
+import { useSocket } from '@/hook/socket'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-// var socket = require('socket.io-client')('http://172.16.0.38:3000')
-import SocketIOClientStatic from 'socket.io-client'
+
 /** 尝试 */
 export default function TrySome() {
     const [himsg, next_himsg] = useState('init')
+    const sockethold = useSocket()
     useEffect(() => {
-        const socket = SocketIOClientStatic('http://172.16.0.38:3000')
+        const socket = sockethold.client
+        if (!socket) {
+            return
+        }
         console.log(socket.disconnected)
 
         socket.on('disconnect', () => {
