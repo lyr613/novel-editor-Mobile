@@ -3,6 +3,7 @@ import { SafeAreaView, StatusBar } from 'react-native'
 
 import { NativeRouter, Route, Switch } from 'react-router-native'
 import Shelf from './shelf'
+import TrySome from './trysome'
 
 const App = () => {
     return (
@@ -12,6 +13,7 @@ const App = () => {
                 <NativeRouter>
                     <Switch>
                         <Route path="/qqq"></Route>
+                        <Route component={TrySome}></Route>
                         <Route component={Shelf}></Route>
                     </Switch>
                 </NativeRouter>
