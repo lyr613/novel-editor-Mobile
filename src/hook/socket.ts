@@ -22,7 +22,18 @@ export function useSocket() {
         client: null,
     }
     useEffect(() => {
-        hold.client = get_socket_client()
+        const socket = get_socket_client()
+        hold.client = socket
+        socket.on('connect', function () {
+            socket.emit('set_it_app')
+            // function qqq() {
+            //     socket.emit('heart1', 233)
+            // }
+            // qqq()
+            // setInterval(() => {
+            //     qqq()
+            // }, 3000)
+        })
     }, [])
     return hold
 }
