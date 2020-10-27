@@ -25,25 +25,36 @@ class AppSocket {
 
             console.log(book_id, rest_src, txt.length)
 
-            const book_src = [RNFS.CachesDirectoryPath, book_id].join('/')
-            console.log(book_src)
+            // const book_src = [RNFS.CachesDirectoryPath, book_id].join('/')
+            // console.log(book_src)
 
-            const be_book_exist = await RNFS.existsAssets(book_src)
-            if (!be_book_exist) {
-                RNFS.mkdir(book_src)
-            }
+            // const be_book_exist = await RNFS.existsAssets(book_src)
+            // if (!be_book_exist) {
+            //     RNFS.mkdir(book_src)
+            // }
             const src = [RNFS.CachesDirectoryPath, book_id, rest_src].join('/')
             await RNFS.writeFile(src, txt, 'utf8')
-            const red = await RNFS.readFile(src)
-            console.log('read', red.length)
+            // const red = await RNFS.readFile(src)
+            // console.log('read', red.length)
+            client.emit('send-next')
         })
         /** 第一步, 准备书的目录和碎片信息 */
         client.on('setup-book', async (id: string, name: string) => {
+            console.log('准备书文件夹')
+
             const book_src = [RNFS.CachesDirectoryPath, id].join('/')
             const be_book_exist = await RNFS.existsAssets(book_src)
             if (!be_book_exist) {
                 await RNFS.mkdir(book_src)
             }
+            // 节文本的文件夹
+            const nodebox_src = [book_src, 'chapters'].join('/')
+            const be_nodebox_exist = await RNFS.existsAssets(nodebox_src)
+            if (!be_nodebox_exist) {
+                await RNFS.mkdir(nodebox_src)
+            }
+
+            // opt
             const optsrc = [RNFS.CachesDirectoryPath, id, 'shard.json'].join('/')
             const opt_exist = await RNFS.existsAssets(book_src)
             let next_opt = { name }
@@ -55,6 +66,9 @@ class AppSocket {
             }
             const next_txt = JSON.stringify(next_opt)
             await RNFS.writeFile(optsrc, next_txt, 'utf8')
+            console.log('书文件夹准备好了')
+
+            client.emit('send-next')
         })
         this.client = client
     }

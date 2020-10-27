@@ -4,6 +4,7 @@ import { timer } from 'rxjs'
 import { useObservable } from 'rxjs-hooks'
 import { take } from 'rxjs/operators'
 import RNFS from 'react-native-fs'
+import { book_use_id$ } from '@/subject/book'
 
 /** 书架 */
 export default function Shelf() {
@@ -56,7 +57,12 @@ const bookli: bk[] = Array.from({ length: 20 }, (_, i) => {
 
 function Book(p: { item: bk }) {
     return (
-        <View style={ss.book}>
+        <View
+            style={ss.book}
+            onTouchEnd={() => {
+                book_use_id$.next(p.item.id)
+            }}
+        >
             <View style={ss.inforline}>
                 <Text style={ss.namet}>{p.item.name.slice(0, 10)}</Text>
             </View>

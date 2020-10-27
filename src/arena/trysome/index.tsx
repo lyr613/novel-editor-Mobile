@@ -8,10 +8,17 @@ import { app_socket } from '@/hook/socket'
 export default function TrySome() {
     const [src_scaned, next_src_scaned] = useState('')
     const [himsg, next_himsg] = useState('init')
+    const rt = useHistory()
     return (
         <View>
-            <Text>123{himsg}</Text>
-            <Text>{src_scaned}</Text>
+            <View
+                onTouchEnd={() => {
+                    rt.push('/shelf')
+                }}
+            >
+                <Text>123{himsg}</Text>
+                <Text>{src_scaned}</Text>
+            </View>
             {!src_scaned && (
                 <RNCamera
                     style={styles.scan}
