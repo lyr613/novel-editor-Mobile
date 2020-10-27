@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { useHistory } from 'react-router'
 import RNFS from 'react-native-fs'
 import { mk_router } from '@/router/opt'
+import { mk_file_src } from '@/util/file-src'
 
 // 文件读写
 export default function QQQ() {
@@ -10,7 +11,7 @@ export default function QQQ() {
     const r = mk_router('edit')
     useEffect(() => {
         async function kkk() {
-            const src = RNFS.CachesDirectoryPath + '/flag.txt'
+            const src = mk_file_src(['flag.txt'])
             await RNFS.writeFile(src, 'flag', 'utf8')
             const red = await RNFS.readFile(src)
             console.log('read', red)

@@ -10,13 +10,14 @@ export default function TrySome() {
     const [himsg, next_himsg] = useState('init')
     const rt = useHistory()
     return (
-        <View>
-            <View
-                onTouchEnd={() => {
-                    rt.push('/shelf')
-                }}
-            >
-                <Text>123{himsg}</Text>
+        <View
+            onTouchStart={() => {
+                console.log('跳到书架')
+                rt.push('/shelf')
+            }}
+        >
+            <View style={styles.jump}>
+                <Text style={styles.big}>123{himsg}</Text>
                 <Text>{src_scaned}</Text>
             </View>
             {!src_scaned && (
@@ -46,6 +47,9 @@ const styles = StyleSheet.create({
     },
     scan: {
         width: '100%',
-        height: '100%',
+        height: '70%',
+    },
+    jump: {
+        height: '30%',
     },
 })

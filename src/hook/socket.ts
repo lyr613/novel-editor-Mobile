@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import SocketIOClientStatic from 'socket.io-client'
 import RNFS from 'react-native-fs'
+import { mk_file_src } from '@/util/file-src'
 
 class AppSocket {
     client: SocketIOClient.Socket | null = null
@@ -19,20 +20,12 @@ class AppSocket {
             //     qqq()
             // }, 3000)
         })
-        // 应该先做一个准备, 防止反复检查浪费时间
+        // 接受文件, json和节文本都通过此
         client.on('send-file', async (book_id: string, rest_src: string, txt: string) => {
             console.log('send-file')
-
             console.log(book_id, rest_src, txt.length)
 
-            // const book_src = [RNFS.CachesDirectoryPath, book_id].join('/')
-            // console.log(book_src)
-
-            // const be_book_exist = await RNFS.existsAssets(book_src)
-            // if (!be_book_exist) {
-            //     RNFS.mkdir(book_src)
-            // }
-            const src = [RNFS.CachesDirectoryPath, book_id, rest_src].join('/')
+            const src = mk_file_src([book_id, rest_src])
             await RNFS.writeFile(src, txt, 'utf8')
             // const red = await RNFS.readFile(src)
             // console.log('read', red.length)
@@ -41,8 +34,13 @@ class AppSocket {
         /** 第一步, 准备书的目录和碎片信息 */
         client.on('setup-book', async (id: string, name: string) => {
             console.log('准备书文件夹')
+            const root_src = mk_file_src([])
+            const be_root_exist = await RNFS.existsAssets(root_src)
+            if (!be_root_exist) {
+                await RNFS.mkdir(root_src)
+            }
 
-            const book_src = [RNFS.CachesDirectoryPath, id].join('/')
+            const book_src = mk_file_src([id])
             const be_book_exist = await RNFS.existsAssets(book_src)
             if (!be_book_exist) {
                 await RNFS.mkdir(book_src)
@@ -55,7 +53,7 @@ class AppSocket {
             }
 
             // opt
-            const optsrc = [RNFS.CachesDirectoryPath, id, 'shard.json'].join('/')
+            const optsrc = mk_file_src([id, 'shard.json'])
             const opt_exist = await RNFS.existsAssets(book_src)
             let next_opt = { name }
             if (opt_exist) {

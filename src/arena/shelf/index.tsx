@@ -1,30 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
-import { timer } from 'rxjs'
+import { Subject, timer } from 'rxjs'
 import { useObservable } from 'rxjs-hooks'
-import { take } from 'rxjs/operators'
+import { take, tap } from 'rxjs/operators'
 import RNFS from 'react-native-fs'
 import { book_use_id$ } from '@/subject/book'
+import { mk_file_src } from '@/util/file-src'
+import { useHistory } from 'react-router-native'
+
+const book_sel$ = new Subject<string>()
 
 /** 书架 */
 export default function Shelf() {
     const [books, next_books] = useState([] as bk[])
+    const rt = useHistory()
+    useObservable(() =>
+        book_sel$.pipe(
+            tap(() => {
+                rt.push('/chapter')
+            }),
+        ),
+    )
+
     useEffect(() => {
         async function get_books() {
-            const childs = await RNFS.readDir(RNFS.CachesDirectoryPath)
-            const childs2 = childs.filter((v) => v.isDirectory() && /[a-z0-9]{32}/.test(v.name))
-            const re = []
-            for await (const cd of childs2) {
-                const optsrc = [RNFS.CachesDirectoryPath, cd.name, 'shard.json'].join('/')
-                const opttxt = await RNFS.readFile(optsrc, 'utf8')
-                const opt = JSON.parse(opttxt)
-                re.push({
-                    id: cd.name,
-                    name: opt.name,
-                })
-            }
-            console.log(re)
-            next_books(re)
+            try {
+                const childs = await RNFS.readDir(mk_file_src([]))
+                const childs2 = childs.filter((v) => v.isDirectory() && /[a-z0-9]{32}/.test(v.name))
+                const re = []
+                for await (const cd of childs2) {
+                    const optsrc = mk_file_src([cd.name, 'shard.json'])
+                    const opttxt = await RNFS.readFile(optsrc, 'utf8')
+                    const opt = JSON.parse(opttxt)
+                    re.push({
+                        id: cd.name,
+                        name: opt.name,
+                    })
+                }
+                console.log(re)
+                next_books(re)
+            } catch (error) {}
         }
         get_books()
     }, [])
@@ -48,19 +63,17 @@ interface bk {
     name: string
 }
 
-const bookli: bk[] = Array.from({ length: 20 }, (_, i) => {
-    return {
-        id: i + '',
-        name: '啊名字' + i,
-    }
-})
-
 function Book(p: { item: bk }) {
+    // const rt = useHistory()
     return (
         <View
             style={ss.book}
             onTouchEnd={() => {
                 book_use_id$.next(p.item.id)
+                book_sel$.next()
+                console.log('跳')
+
+                // rt.push('/chapter')
             }}
         >
             <View style={ss.inforline}>
