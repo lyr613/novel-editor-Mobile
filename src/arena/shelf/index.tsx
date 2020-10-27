@@ -3,16 +3,36 @@ import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
 import { timer } from 'rxjs'
 import { useObservable } from 'rxjs-hooks'
 import { take } from 'rxjs/operators'
+import RNFS from 'react-native-fs'
 
 /** 书架 */
 export default function Shelf() {
-    const t = useObservable(() => timer(0, 1000).pipe(take(5)), -1)
+    const [books, next_books] = useState([] as bk[])
+    useEffect(() => {
+        async function get_books() {
+            const childs = await RNFS.readDir(RNFS.CachesDirectoryPath)
+            const childs2 = childs.filter((v) => v.isDirectory() && /[a-z0-9]{32}/.test(v.name))
+            const re = []
+            for await (const cd of childs2) {
+                const optsrc = [RNFS.CachesDirectoryPath, cd.name, 'shard.json'].join('/')
+                const opttxt = await RNFS.readFile(optsrc, 'utf8')
+                const opt = JSON.parse(opttxt)
+                re.push({
+                    id: cd.name,
+                    name: opt.name,
+                })
+            }
+            console.log(re)
+            next_books(re)
+        }
+        get_books()
+    }, [])
     return (
         <View style={ss.shelf}>
             {/* <Text>书架{t}</Text> */}
             <FlatList
                 style={ss.bookbox}
-                data={bookli}
+                data={books}
                 renderItem={Book}
                 keyExtractor={(v) => v.id}
                 ItemSeparatorComponent={SplitLine}

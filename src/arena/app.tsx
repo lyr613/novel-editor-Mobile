@@ -13,8 +13,8 @@ const App = () => {
                 <NativeRouter>
                     <Switch>
                         <Route path="/qqq"></Route>
-                        <Route component={TrySome}></Route>
                         <Route component={Shelf}></Route>
+                        <Route component={TrySome}></Route>
                     </Switch>
                 </NativeRouter>
             </SafeAreaView>
