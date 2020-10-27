@@ -22,8 +22,8 @@ class AppSocket {
         })
         // 接受文件, json和节文本都通过此
         client.on('send-file', async (book_id: string, rest_src: string, txt: string) => {
-            console.log('send-file')
-            console.log(book_id, rest_src, txt.length)
+            // console.log('send-file')
+            // console.log(book_id, rest_src, txt.length)
 
             const src = mk_file_src([book_id, rest_src])
             await RNFS.writeFile(src, txt, 'utf8')
