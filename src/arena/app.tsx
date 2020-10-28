@@ -1,3 +1,4 @@
+import { router_nexter$ } from '@/subject/router'
 import React, { useEffect } from 'react'
 import { BackHandler, SafeAreaView, StatusBar } from 'react-native'
 import { StyleSheet, Text, View } from 'react-native'
@@ -33,6 +34,16 @@ function RT() {
              * 返回false时会使事件继续传递，触发其他注册的监听函数，或是系统默认的后退行为
              */
             return false
+        })
+    }, [])
+    useEffect(() => {
+        // 监听路由改变
+        router_nexter$.subscribe((next) => {
+            if (Array.isArray(next)) {
+                next = next.join('/').replace(/\/+/g, '')
+            }
+            next = next.replace(/^\/*/, '/')
+            rt.push(next)
         })
     }, [])
     return (

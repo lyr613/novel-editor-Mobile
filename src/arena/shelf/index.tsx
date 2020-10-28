@@ -7,20 +7,12 @@ import RNFS from 'react-native-fs'
 import { book_use_id$ } from '@/subject/book'
 import { mk_file_src } from '@/util/file-src'
 import { useHistory } from 'react-router-native'
-
-const book_sel$ = new Subject<string>()
+import { router_nexter$ } from '@/subject/router'
 
 /** 书架 */
 export default function Shelf() {
     const [books, next_books] = useState([] as bk[])
     const rt = useHistory()
-    useObservable(() =>
-        book_sel$.pipe(
-            tap(() => {
-                rt.push('/chapter')
-            }),
-        ),
-    )
 
     useEffect(() => {
         async function get_books() {
@@ -70,8 +62,7 @@ function Book(p: { item: bk }) {
             style={ss.book}
             onTouchEnd={() => {
                 book_use_id$.next(p.item.id)
-                book_sel$.next()
-                console.log('跳')
+                router_nexter$.next('/chapter')
 
                 // rt.push('/chapter')
             }}
