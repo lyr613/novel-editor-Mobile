@@ -39,6 +39,10 @@ function RT() {
     useEffect(() => {
         // 监听路由改变
         router_nexter$.subscribe((next) => {
+            if (!next) {
+                rt.push('/')
+                return
+            }
             if (Array.isArray(next)) {
                 next = next.join('/').replace(/\/+/g, '')
             }
@@ -48,12 +52,18 @@ function RT() {
     }, [])
     return (
         <Switch>
-            <Route path="/qqq"></Route>
             <Route path="/shelf" component={Shelf}></Route>
             <Route path="/chapter" component={Chapter}></Route>
-            <Route component={TrySome}></Route>
+            <Route component={Empty}></Route>
         </Switch>
     )
+}
+
+/** 承接没有的路由, 转到主页去 */
+function Empty() {
+    const rt = useHistory()
+    rt.push('/shelf')
+    return <View></View>
 }
 
 const ss = StyleSheet.create({

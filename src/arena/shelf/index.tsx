@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
-import { Subject, timer } from 'rxjs'
-import { useObservable } from 'rxjs-hooks'
-import { take, tap } from 'rxjs/operators'
 import RNFS from 'react-native-fs'
 import { book_use_id$ } from '@/subject/book'
 import { mk_file_src } from '@/util/file-src'
