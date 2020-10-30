@@ -7,7 +7,6 @@ import { app_socket } from '@/hook/socket'
 /** 尝试 */
 export default function TrySome() {
     const [src_scaned, next_src_scaned] = useState('')
-    const [himsg, next_himsg] = useState('init')
     const rt = useHistory()
     return (
         <View
@@ -17,7 +16,7 @@ export default function TrySome() {
             }}
         >
             <View style={styles.jump}>
-                <Text style={styles.big}>123{himsg}</Text>
+                <Text style={styles.big}>去书架</Text>
                 <Text>{src_scaned}</Text>
             </View>
             {!src_scaned && (

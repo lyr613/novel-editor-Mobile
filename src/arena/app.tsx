@@ -26,7 +26,7 @@ function RT() {
     useEffect(() => {
         // 监听安卓返回键
         BackHandler.addEventListener('hardwareBackPress', function () {
-            if (rt.location.pathname !== '/') {
+            if (rt.location.pathname !== '/' && rt.location.pathname !== '/shelf') {
                 rt.goBack()
                 return true
             }
@@ -54,6 +54,7 @@ function RT() {
         <Switch>
             <Route path="/shelf" component={Shelf}></Route>
             <Route path="/chapter" component={Chapter}></Route>
+            <Route path="/scan" component={TrySome}></Route>
             <Route component={Empty}></Route>
         </Switch>
     )

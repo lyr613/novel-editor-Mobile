@@ -9,7 +9,6 @@ import { router_nexter$ } from '@/subject/router'
 /** 书架 */
 export default function Shelf() {
     const [books, next_books] = useState([] as bk[])
-    const rt = useHistory()
 
     useEffect(() => {
         async function get_books() {
@@ -34,6 +33,13 @@ export default function Shelf() {
     }, [])
     return (
         <View style={ss.shelf}>
+            <View
+                onTouchEnd={() => {
+                    router_nexter$.next('scan')
+                }}
+            >
+                <Text style={ss.gotoscan}>去扫码</Text>
+            </View>
             {/* <Text>书架{t}</Text> */}
             <FlatList
                 style={ss.bookbox}
@@ -118,5 +124,8 @@ const ss = StyleSheet.create({
         top: 0,
         width: 80,
         height: 120,
+    },
+    gotoscan: {
+        fontSize: 40,
     },
 })
