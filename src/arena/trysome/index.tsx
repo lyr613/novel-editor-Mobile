@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { useHistory } from 'react-router'
 import { RNCamera } from 'react-native-camera'
-import { app_socket } from '@/hook/socket'
+import { link_socket } from '@/hook/socket'
 
 /** 尝试 */
 export default function TrySome() {
@@ -28,11 +28,7 @@ export default function TrySome() {
                     onBarCodeRead={(e) => {
                         console.log(e.data)
                         next_src_scaned(e.data)
-                        app_socket.link(e.data)
-                        const client = app_socket.client
-                        if (!client) {
-                            return
-                        }
+                        link_socket(e.data, next_src_scaned)
                     }}
                 />
             )}
