@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import { NativeRouter, Route, Switch, useHistory } from 'react-router-native'
 import Chapter from './chapter'
+import Scan from './scan'
 import Shelf from './shelf'
 import TrySome from './trysome'
 
@@ -54,7 +55,7 @@ function RT() {
         <Switch>
             <Route path="/shelf" component={Shelf}></Route>
             <Route path="/chapter" component={Chapter}></Route>
-            <Route path="/scan" component={TrySome}></Route>
+            <Route path="/scan" component={Scan}></Route>
             <Route component={Empty}></Route>
         </Switch>
     )
