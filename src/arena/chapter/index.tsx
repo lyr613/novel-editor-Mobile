@@ -1,3 +1,4 @@
+import { pub_sty_btn } from '@/style'
 import { book_use_id$ } from '@/subject/book'
 import { mk_file_src } from '@/util/file-src'
 import React, { useEffect, useRef, useState } from 'react'
@@ -86,6 +87,12 @@ function Txt() {
     const [prevh, next_prevh] = useState(0)
     const [can_show_tool, next_can_show_tool] = useState(false)
     const rf = useRef(null as any)
+    const [can_show_next, next_can_show_next] = useState(false)
+    useEffect(() => {
+        setTimeout(() => {
+            next_can_show_next(true)
+        }, 1000)
+    }, [])
 
     useEffect(() => {
         const ob = node_id$.subscribe(async (id) => {
@@ -115,48 +122,50 @@ function Txt() {
                     next_can_show_tool(be_topper)
                 }}
             >
-                <Text style={ss.read}>{txt}</Text>
-                <View style={styread.toolfoo}>
-                    <View
-                        style={styread.btn}
-                        onTouchEnd={() => {
-                            const cps = chapter_li$.value
-                            const nds: node[] = []
-                            let i = 0
-                            let savei = -1
-                            // 奇怪, 咋没flat方法
-                            cps.forEach((cp) => {
-                                cp.children.forEach((nd) => {
-                                    if (nd.id === node_id$.value) {
-                                        savei = i
-                                    }
-                                    nds.push(nd)
-                                    i++
+                <Text style={styread.readtxt}>{txt}</Text>
+                {can_show_next && (
+                    <View style={styread.toolfoo}>
+                        <View
+                            style={pub_sty_btn('').box}
+                            onTouchEnd={() => {
+                                const cps = chapter_li$.value
+                                const nds: node[] = []
+                                let i = 0
+                                let savei = -1
+                                // 奇怪, 咋没flat方法
+                                cps.forEach((cp) => {
+                                    cp.children.forEach((nd) => {
+                                        if (nd.id === node_id$.value) {
+                                            savei = i
+                                        }
+                                        nds.push(nd)
+                                        i++
+                                    })
                                 })
-                            })
 
-                            if (savei > -1 && savei + 1 < nds.length) {
-                                const nexti = savei + 1
-                                const nd = nds[nexti]
-                                node_id$.next(nd.id)
-                                setTimeout(() => {
-                                    const d = rf.current
-                                    if (d) {
-                                        d.scrollTo({
-                                            x: 0,
-                                            y: 0,
-                                            animated: false,
-                                        })
-                                    }
-                                }, 100)
-                            } else {
-                                can_show_chapterli$.next(true)
-                            }
-                        }}
-                    >
-                        <Text style={styread.btntxt}>下一节</Text>
+                                if (savei > -1 && savei + 1 < nds.length) {
+                                    const nexti = savei + 1
+                                    const nd = nds[nexti]
+                                    node_id$.next(nd.id)
+                                    setTimeout(() => {
+                                        const d = rf.current
+                                        if (d) {
+                                            d.scrollTo({
+                                                x: 0,
+                                                y: 0,
+                                                animated: false,
+                                            })
+                                        }
+                                    }, 100)
+                                } else {
+                                    can_show_chapterli$.next(true)
+                                }
+                            }}
+                        >
+                            <Text style={pub_sty_btn('').txt}>下一节</Text>
+                        </View>
                     </View>
-                </View>
+                )}
             </ScrollView>
 
             {can_show_tool && (
@@ -234,5 +243,8 @@ const styread = StyleSheet.create({
         marginBottom: 20,
         height: 60,
         padding: 10,
+    },
+    readtxt: {
+        fontSize: 18,
     },
 })

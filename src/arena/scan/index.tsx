@@ -16,7 +16,8 @@ export default function Scan() {
                     router_nexter$.next('shelf')
                 }}
             >
-                <Text style={ss.jumptxt}>去书架</Text>
+                <Text style={ss.jumptxt}>{'去书架'}</Text>
+                <Text style={ss.jumptxt2}>{src_scaned}</Text>
             </View>
             {!src_scaned && (
                 <RNCamera
@@ -46,6 +47,10 @@ const ss = StyleSheet.create({
     },
     jumptxt: {
         fontSize: 36,
+        textAlign: 'center',
+    },
+    jumptxt2: {
+        fontSize: 16,
         textAlign: 'center',
     },
     scan: {
