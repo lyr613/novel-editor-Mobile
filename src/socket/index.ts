@@ -15,7 +15,7 @@ export function link_socket(src: string, setter: Function) {
     app_socket_client.on('connect', function () {
         setter('连上了, 即将发送设置此app')
         app_socket_client!.emit('set_it_app')
-        setter('已经发送设置此app')
+        setter('已经发送设置此手机端')
     })
     // 接受文件, json和节文本都通过此
     app_socket_client.on('send-file', async (book_id: string, rest_src: string, txt: string) => {
