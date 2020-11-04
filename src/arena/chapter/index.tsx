@@ -109,10 +109,12 @@ function NodeItem(p: nodeitem) {
 function Txt() {
     const [prevh, next_prevh] = useState(0)
     const [can_show_tool, next_can_show_tool] = useState(false)
+    /** 滚动视图 */
     const rf = useRef(null as any)
     const [can_show_next, next_can_show_next] = useState(false)
     const [lines, next_lines] = useState([] as string[])
     useEffect(() => {
+        // 一开始不显示底部按钮, 不然会闪一下
         const a = setTimeout(() => {
             next_can_show_next(true)
         }, 345)
@@ -122,6 +124,7 @@ function Txt() {
     }, [])
 
     useEffect(() => {
+        // 更新节id后, 读取文本
         const ob = node_id$.subscribe(async (id) => {
             if (!id) {
                 return
