@@ -16,6 +16,7 @@ const chapter_li$ = new BehaviorSubject([] as chapter[])
 /** 章节目录 */
 export default function Chapter() {
     const [chapters, next_chapters] = useState([] as chapter[])
+    const [prev_node_id, next_prev_node_id] = useState('')
     const datali = chapters.map((v) => ({
         title: v.name,
         data: v.children,
@@ -34,21 +35,44 @@ export default function Chapter() {
             const cps: chapter[] = JSON.parse(txt)
             chapter_li$.next(cps)
             next_chapters(cps)
+            // 读取上次读的节
+            try {
+                const prev_src = mk_file_src([bookid, 'prev_node'])
+                const prev_node_id = await RNFS.readFile(prev_src, 'utf8')
+                next_prev_node_id(prev_node_id)
+            } catch (error) {}
         }
         get_chapters()
     }, [])
     return (
         <View style={ss.box}>
             {can_show_chapterli ? (
-                <SectionList
-                    style={ss.chapterbox}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => <NodeItem item={item} />}
-                    sections={can_show_chapterli ? datali : []}
-                    renderSectionHeader={({ section: { title, chapter } }) => (
-                        <ChapterName title={title} chapter={chapter} />
+                <>
+                    {!!prev_node_id && (
+                        <View style={ss.prevbox}>
+                            <View
+                                style={pub_sty_btn('').box}
+                                onTouchEnd={async () => {
+                                    const prev_src = mk_file_src([book_use_id$.value, 'prev_node'])
+                                    const prev_node_id = await RNFS.readFile(prev_src, 'utf8')
+                                    node_id$.next(prev_node_id)
+                                    can_show_chapterli$.next(false)
+                                }}
+                            >
+                                <Text style={pub_sty_btn('').txt}>上次阅读</Text>
+                            </View>
+                        </View>
                     )}
-                />
+                    <SectionList
+                        style={ss.chapterbox}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => <NodeItem item={item} />}
+                        sections={can_show_chapterli ? datali : []}
+                        renderSectionHeader={({ section: { title, chapter } }) => (
+                            <ChapterName title={title} chapter={chapter} />
+                        )}
+                    />
+                </>
             ) : (
                 <Txt />
             )}
@@ -83,15 +107,18 @@ function NodeItem(p: nodeitem) {
 }
 
 function Txt() {
-    const [txt, next_txt] = useState('')
     const [prevh, next_prevh] = useState(0)
     const [can_show_tool, next_can_show_tool] = useState(false)
     const rf = useRef(null as any)
     const [can_show_next, next_can_show_next] = useState(false)
+    const [lines, next_lines] = useState([] as string[])
     useEffect(() => {
-        setTimeout(() => {
+        const a = setTimeout(() => {
             next_can_show_next(true)
-        }, 1000)
+        }, 345)
+        return () => {
+            clearTimeout(a)
+        }
     }, [])
 
     useEffect(() => {
@@ -101,7 +128,20 @@ function Txt() {
             }
             const src = mk_file_src([book_use_id$.value, 'chapters', id + '.txt'])
             const txt = await RNFS.readFile(src, 'utf8')
-            next_txt(txt)
+            const prefix = Array(2).fill('\u3000').join('')
+            let txt2 = txt
+                .split(/\n+[\x00-\x20\x7F-\xA0\u1680\u180E\u2000-\u200B\u2028\u2029\u202F\u205F\u3000\uFEFF]*\n*/)
+                .map((l) =>
+                    l
+                        .replace(/^[\s\u3000]*/, prefix)
+                        .replace(/^/, '\n')
+                        .replace(/\s+$/, ''),
+                )
+            next_lines(txt2)
+            // 开始记录最后阅读的章节
+            const prev_src = mk_file_src([book_use_id$.value, 'prev_node'])
+            await RNFS.writeFile(prev_src, id)
+            console.log('已记录最后阅读节')
         })
         return () => {
             ob.unsubscribe()
@@ -122,7 +162,11 @@ function Txt() {
                     next_can_show_tool(be_topper)
                 }}
             >
-                <Text style={styread.readtxt}>{txt}</Text>
+                {lines.map((line, i) => (
+                    <Text key={i} style={styread.readtxt}>
+                        {line}
+                    </Text>
+                ))}
                 {can_show_next && (
                     <View style={styread.toolfoo}>
                         <View
@@ -191,8 +235,11 @@ const ss = StyleSheet.create({
     box: {
         height: '100%',
     },
+    prevbox: {
+        padding: 10,
+    },
     chapterbox: {
-        height: '100%',
+        height: '60%',
     },
     chapter: {
         paddingLeft: 20,
