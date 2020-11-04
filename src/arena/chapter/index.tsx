@@ -237,6 +237,7 @@ const ss = StyleSheet.create({
     },
     box: {
         height: '100%',
+        backgroundColor: 'rgb(246,241,231)',
     },
     prevbox: {
         padding: 10,
